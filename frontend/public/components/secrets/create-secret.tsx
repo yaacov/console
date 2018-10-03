@@ -5,9 +5,10 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
+import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
 import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
+import { SecretModel } from '../../models';
 import { WebHookSecretKey } from '../secret';
 
 enum SecretTypeAbstraction {
@@ -141,13 +142,12 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
   }
   save (e) {
     e.preventDefault();
-    const { kind, metadata } = this.state.secret;
+    const { metadata } = this.state.secret;
     this.setState({ inProgress: true });
     const newSecret = _.assign({}, this.state.secret, {stringData: this.state.stringData}, {type: this.state.type});
-    const ko = kindObj(kind);
     (this.props.isCreate
-      ? k8sCreate(ko, newSecret)
-      : k8sUpdate(ko, newSecret, metadata.namespace, newSecret.metadata.name)
+      ? k8sCreate(SecretModel, newSecret)
+      : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
     ).then(secret => {
       this.setState({inProgress: false});
       history.push(resourceObjPath(secret, referenceFor(secret)));
@@ -899,7 +899,7 @@ export const CreateSecret = ({match: {params}}) => {
 };
 
 export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
-  <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save Changes" />
+  <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 
 export type BaseEditSecretState_ = {

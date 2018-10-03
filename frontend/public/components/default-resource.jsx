@@ -4,7 +4,6 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
-import { ResourceOverviewHeading } from './overview';
 import { connectToModel } from '../kinds';
 import {
   Cog,
@@ -12,12 +11,13 @@ import {
   navFactory,
   ResourceCog,
   ResourceLink,
+  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading
 } from './utils';
 
-
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const { common } = Cog.factory;
+const menuActions = [...common];
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-6 col-sm-4" sortField="metadata.name">Name</ColHead>
@@ -69,20 +69,19 @@ export const DefaultDetailsPage = props => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
+DefaultDetailsPage.displayName = 'DefaultDetailsPage';
 
 export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, resource}) =>
-  <div className="co-m-pane resource-overview">
+  <div className="overview__sidebar-pane resource-overview">
     <ResourceOverviewHeading
       actions={menuActions}
       kindObj={kindObject}
       resource={resource}
     />
-    <div className="co-m-pane__body resource-overview__body">
+    <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__summary">
         <ResourceSummary resource={resource} />
       </div>
     </div>
   </div>
 );
-
-DefaultDetailsPage.displayName = 'DefaultDetailsPage';

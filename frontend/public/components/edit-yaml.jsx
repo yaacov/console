@@ -32,7 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({k8s}) => ({
+const stateToProps = ({k8s, UI}) => ({
+  activeNamespace: UI.get('activeNamespace'),
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
@@ -209,6 +210,12 @@ export const EditYAML = connect(stateToProps)(
         this.handleError(`The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`);
         return;
       }
+
+      // If this is a namesapced resource, default to the active namespace when none is specified in the YAML.
+      if (!obj.metadata.namespace && model.namespaced) {
+        obj.metadata.namespace = this.props.activeNamespace;
+      }
+
       const { namespace, name } = this.props.obj.metadata;
       const { namespace: newNamespace, name: newName } = obj.metadata;
 
@@ -314,7 +321,7 @@ export const EditYAML = connect(stateToProps)(
                       <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
                     </p>}
                     {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save Changes</button>}
+                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
                     {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
                     <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>

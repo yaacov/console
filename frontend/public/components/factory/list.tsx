@@ -20,7 +20,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceClassDisplayName } from '../../module/k8s';
-import { alertRuleState } from '../../module/monitoring';
+import { alertRuleState, silenceState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -37,6 +37,10 @@ const listFilters = {
   'alert-rule-name': (filter, alertRule) => fuzzyCaseInsensitive(filter, alertRule.name),
 
   'alert-rule-state': (filter, alertRule) => filter.selected.has(alertRuleState(alertRule)),
+
+  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
+
+  'silence-state': (filter, silence) => filter.selected.has(silenceState(silence)),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)),
@@ -267,10 +271,11 @@ export const Rows: React.SFC<RowsProps> = (props) => {
     </CellMeasurer>;
   };
 
+  // Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158
   return <div className="co-m-table-grid__body">
     { fake
       ? <EmptyBox label={label} />
-      : <WindowScroller>
+      : <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
           <AutoSizer disableHeight>
             {({width}) => <div ref={registerChild}>
@@ -278,7 +283,7 @@ export const Rows: React.SFC<RowsProps> = (props) => {
                 autoHeight
                 data={props.data}
                 expand={props.expand}
-                height={height}
+                height={height || 0}
                 deferredMeasurementCache={measurementCache}
                 rowHeight={measurementCache.rowHeight}
                 isScrolling={isScrolling}
