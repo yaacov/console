@@ -379,7 +379,7 @@ export const VirtualMachinesPage = connect(
         ListComponent={VMList}
         createProps={this.createProps}
         rowFilters={filters}
-      />;
+      />
     </React.Fragment>;
   }
 });
