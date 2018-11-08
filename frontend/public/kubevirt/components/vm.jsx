@@ -253,12 +253,12 @@ const Details = ({obj: vm}) => {
 
 export const VirtualMachinesDetailsPage = props => {
   const pages = [navFactory.details(Details)];
-  pages.push({ // TODO: might be moved based on review; or display conditionally if VM is running?
+  pages.push(navFactory.editYaml());
+  pages.push({
     href: 'consoles',
     name: 'Consoles',
     component: VmConsolesConnected
   });
-  pages.push(navFactory.editYaml());
   return (
     <DetailsPage
       {...props}
