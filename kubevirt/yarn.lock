@@ -436,9 +436,10 @@ keycode@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.0.tgz#3d0af56dc7b8b8e5cba8d0a97f107204eec22b04"
 
-kubevirt-web-ui-components@0.1.7-1:
-  version "0.1.7-1"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.7-1.tgz#16fe12041d86e8c91e3a1b7c7fd50bc4f3b6f254"
+kubevirt-web-ui-components@0.1.7-2:
+  version "0.1.7-2"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.7-2.tgz#c6e77629a2cdd72b0679bf7c5745c52f04d1fd72"
+  integrity sha512-rRAzfEM9sDrkEvT7OytVMjY911YaUjKgkNNGnDD3K0IYkeUyzvM8J72GIUTbW6zMIj4Ym2SeW/WmAMeG0urM7Q==
 
 lodash@^4.17.2:
   version "4.17.11"
