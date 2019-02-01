@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { getCSRFToken } from '../../../co-fetch';
 import { k8sBasePath } from '../../module/okdk8s';
 
-import { VirtualMachineInstanceModel } from '../../models';
+import { VirtualMachineInstanceModel, NamespaceModel, ProjectModel } from '../../models';
 import {
   TEMPLATE_VM_NAME_LABEL,
   DEFAULT_RDP_PORT,
@@ -20,8 +20,16 @@ export const getResource = (model, {
   namespace,
   isList=true,
   matchLabels,
-  matchExpressions } = { namespaced:true, isList:true }) => {
-  const res = { kind: model.kind, namespaced, namespace, isList, prop: model.kind};
+  matchExpressions,
+  prop } = { namespaced:true, isList:true }) => {
+  const res = {
+    // non-admin user cannot list namespaces (k8s wont return only namespaces available to user but 403 forbidden, ).
+    // Instead we need to use ProjectModel which will return available projects (namespaces)
+    kind: model.kind === NamespaceModel.kind ? ProjectModel.kind : model.kind,
+    namespaced,
+    namespace,
+    isList,
+    prop: prop || model.kind};
 
   if (name) {
     res.name = name;
