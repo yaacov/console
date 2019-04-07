@@ -85,8 +85,9 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
+  const namespace = (nic.vm && nic.vm.metadata.namespace) || (nic.vmTemplate && nic.vmTemplate.metadata.namespace);
   const networks = {
-    resource: getResource(NetworkAttachmentDefinitionModel),
+    resource: getResource(NetworkAttachmentDefinitionModel, {namespace}),
   };
   switch (nic.nicType) {
     case NIC_TYPE_VM:
@@ -153,6 +154,7 @@ export class Nic extends React.Component {
           value: getVmNicModel(this.props.vm),
         },
         vm: this.props.vm,
+        vmTemplate: this.props.vmTemplate,
       },
     });
   }
