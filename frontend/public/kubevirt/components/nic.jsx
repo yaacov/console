@@ -95,7 +95,7 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
-  const namespace = getNamespace(nic.vm) || getNamespace(nic.vmTemplate);
+  const namespace = getNamespace(nic.vm || nic.vmTemplate);
   const networks = {
     resource: getResource(NetworkAttachmentDefinitionModel, {namespace}),
   };
