@@ -254,7 +254,7 @@ export class Nic extends React.Component {
 }
 
 Nic.propTypes = {
-  vm: PropTypes.object.isRequired,
+  vm: PropTypes.object.isRequired, // vm may be a template vm.
   vmTemplate: PropTypes.object, // the template of the vm
   patchPrefix: PropTypes.string, // path to the vm in the template
 };
