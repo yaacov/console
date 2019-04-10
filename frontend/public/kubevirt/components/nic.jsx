@@ -95,7 +95,13 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
-  const namespace = getNamespace(nic.vm || nic.vmTemplate);
+  // NOTE: nic.vm is a required prop, it is always defined even if
+  // NicRaw is called from a template page where vm is not completely defined,
+  // in that case:
+  //   getNamespace(nic.vm || nic.vmTemplate) will be undefined.
+  //   while:
+  //   getNamespace(nic.vm) || getNamespace(nic.vmTemplate) will be the namespace of vmTemplate.
+  const namespace = getNamespace(nic.vm) || getNamespace(nic.vmTemplate);
   const networks = {
     resource: getResource(NetworkAttachmentDefinitionModel, {namespace}),
   };
