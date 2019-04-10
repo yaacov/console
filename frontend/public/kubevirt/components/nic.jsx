@@ -95,7 +95,7 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
-  // NOTE: nic.vm is a required prop, it is always defined even if
+  // NOTE:
   // getNamespace(nic.vmTemplate || nic.vm) is not equal to
   // getNamespace(nic.vm || nic.vmTemplate)
   // nic.vm is allways defined, while nic.vmTemplate is only defined when called from
