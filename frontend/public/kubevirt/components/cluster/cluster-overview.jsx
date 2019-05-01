@@ -34,8 +34,7 @@ const CONSUMERS_STORAGE_QUERY = 'sort(topk(5, avg by (pod_name)(irate(container_
 const CONSUMERS_NETWORK_QUERY = `sort(topk(5, sum by (pod_name)(irate(container_network_receive_bytes_total{container_name="POD", pod_name!=""}[1m]) + 
   irate(container_network_transmit_bytes_total{container_name="POD", pod_name!=""}[1m]))))`;
 
-const NODE_CONSUMERS_CPU_QUERY = `sort(topk(5, sum by (node)(
-  rate(container_cpu_usage_seconds_total{container_name!="POD",container_name!="",pod_name!="",node!=""}[5m]))))`;
+const NODE_CONSUMERS_CPU_QUERY = 'sort(topk(5, node:node_cpu_utilisation:avg1m))';
 const NODE_CONSUMERS_MEMORY_QUERY = 'sort(topk(5, node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum))';
 
 const NODE_CONSUMERS_STORAGE_QUERY = 'sort(topk(5, node:node_disk_utilisation:avg_irate{cluster=""}))';
