@@ -27,14 +27,15 @@ import { EventsInnerOverview } from './events-inner-overview';
 import { LoadingInline} from '../utils/okdutils';
 import { LazyRenderer } from '../utils/lazyRenderer';
 
-const CONSUMERS_CPU_QUERY = 'sort(topk(5, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
+const CONSUMERS_CPU_QUERY = 'sort(topk(5, pod_name:container_cpu_usage:sum))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
 
 const CONSUMERS_STORAGE_QUERY = 'sort(topk(5, avg by (pod_name)(irate(container_fs_io_time_seconds_total{container_name="POD", pod_name!=""}[1m]))))';
 const CONSUMERS_NETWORK_QUERY = `sort(topk(5, sum by (pod_name)(irate(container_network_receive_bytes_total{container_name="POD", pod_name!=""}[1m]) + 
   irate(container_network_transmit_bytes_total{container_name="POD", pod_name!=""}[1m]))))`;
 
-const NODE_CONSUMERS_CPU_QUERY = 'sort(topk(5, kube_node_status_capacity_cpu_cores - kube_node_status_allocatable_cpu_cores))';
+const NODE_CONSUMERS_CPU_QUERY = `sort(topk(5, sum by (node)(
+  rate(container_cpu_usage_seconds_total{container_name!="POD",container_name!="",pod_name!="",node!=""}[5m]))))`;
 const NODE_CONSUMERS_MEMORY_QUERY = 'sort(topk(5, node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum))';
 
 const NODE_CONSUMERS_STORAGE_QUERY = 'sort(topk(5, node:node_disk_utilisation:avg_irate{cluster=""}))';
