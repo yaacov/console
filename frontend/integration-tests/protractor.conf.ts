@@ -7,6 +7,7 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream } from 'fs';
 import { format } from 'util';
+import { pluginIntegrationTests } from '@console/plugin-sdk/src/codegen';
 
 const tap = !!process.env.TAP;
 
@@ -19,6 +20,7 @@ const junitReporter = new JUnitXmlReporter({ savePath: './gui_test_screenshots',
 const browserLogs: logging.Entry[] = [];
 
 const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
+const pluginSuites = pluginIntegrationTests();
 
 export const config: Config = {
   framework: 'jasmine',
@@ -87,6 +89,7 @@ export const config: Config = {
     return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
+    ...pluginSuites,
     filter: suite([
       'tests/filter.scenario.ts',
     ]),

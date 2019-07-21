@@ -95,10 +95,11 @@ export type Package = readPkg.NormalizedPackageJson;
 export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
+    integrationTests?: Record<string, string[]>;
   };
 };
 
-type PluginPackageFilter = (
+export type PluginPackageFilter = (
   appPackage: Package,
   pluginPackages: PluginPackage[],
 ) => PluginPackage[];

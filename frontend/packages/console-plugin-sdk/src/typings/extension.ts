@@ -27,7 +27,7 @@ export type Extension<P> = {
  *
  * ```json
  *  {
- *    "name": "@console/demo-plugin",
+ *    "name": "@console/console-demo-plugin",
  *    "version": "0.0.0-fixed",
  *    // scripts, dependencies, etc.
  *    "consolePlugin": {

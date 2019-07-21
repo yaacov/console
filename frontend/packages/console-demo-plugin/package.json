@@ -1,5 +1,5 @@
 {
-  "name": "@console/demo-plugin",
+  "name": "@console/console-demo-plugin",
   "version": "0.0.0-fixed",
   "description": "Demo plugin for Console web application",
   "private": true,
@@ -7,7 +7,16 @@
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed"
   },
+  "devDependencies": {
+    "@console/integration-tests": "0.0.0-fixed"
+  },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTests": {
+      "demo": [
+        "@console/integration-tests/tests/base.scenario.ts",
+        "integration-tests/tests/demo.scenario.ts"
+      ]
+    }
   }
 }

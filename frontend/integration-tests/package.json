@@ -1,0 +1,14 @@
+{
+  "name": "@console/integration-tests",
+  "version": "0.0.0-fixed",
+  "description": "Console integration tests",
+  "private": true,
+  "devDependencies": {
+    "immutable": "3.x",
+    "js-yaml": "^3.13.1",
+    "lodash-es": "4.x",
+    "protractor": "5.4.x",
+    "protractor-fail-fast": "3.x",
+    "protractor-jasmine2-screenshot-reporter": "0.5.x"
+  }
+}

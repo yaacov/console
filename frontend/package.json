@@ -5,7 +5,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "public"
+    "public",
+    "integration-tests"
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",
@@ -170,9 +171,6 @@
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "node-sass": "4.8.x",
-    "protractor": "5.4.x",
-    "protractor-fail-fast": "3.x",
-    "protractor-jasmine2-screenshot-reporter": "0.5.x",
     "read-pkg": "5.x",
     "redux-mock-store": "^1.5.3",
     "resolve-url-loader": "2.x",
