@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars, no-undef */
 import { $, browser, ExpectedConditions as until } from 'protractor';
-
 import { createItemButton, isLoaded } from '../../../../../integration-tests/views/crud.view';
 import { fillInput, selectDropdownOption, click } from '../utils/utils';
 import { cloudInitConfig, storageResource } from '../utils/types';
 import { PAGE_LOAD_TIMEOUT } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
 
-export default class Wizard {
+export class Wizard {
   async openWizard() {
     await click(createItemButton);
     await click(wizardView.createWithWizardLink);

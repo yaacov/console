@@ -1,8 +1,9 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { OrderedMap } from 'immutable';
 import * as _ from 'lodash';
-
+import { testName } from '../../../../integration-tests/protractor.conf';
 // eslint-disable-next-line no-unused-vars
+import { statusIcons } from '../views/virtualMachine.view';
 import { networkResource, storageResource, provisionOption } from './utils/types';
 import {
   removeLeakedResources,
@@ -12,7 +13,6 @@ import {
   getResourceObject,
 } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT, CLONE_VM_TIMEOUT } from './utils/consts';
-import { testName } from '../../../../integration-tests/protractor.conf';
 import {
   basicVmConfig,
   rootDisk,
@@ -22,7 +22,6 @@ import {
   dataVolumeManifest,
 } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
-import { statusIcons } from '../views/virtualMachine.view';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();

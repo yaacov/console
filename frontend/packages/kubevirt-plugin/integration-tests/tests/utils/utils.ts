@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console, no-underscore-dangle */
 import { execSync } from 'child_process';
 import { $, by, ElementFinder, browser, ExpectedConditions as until, element } from 'protractor';
-
 import { config } from '../../../../../integration-tests/protractor.conf';
 import {
   nameInput as loginNameInput,
@@ -214,3 +213,16 @@ export const waitForStringNotInElement = (elem: ElementFinder, needle: string) =
     return !content.includes(needle);
   };
 };
+
+/**
+ * Search YAML manifest for a given string. Return true if found.
+ * @param     {string}    needle    String to search in YAML.
+ * @param     {string}    name      Name of the resource.
+ * @param     {string}    namespace Namespace of the resource.
+ * @param     {string}    kind      Kind of the resource.
+ * @returns   {boolean}             True if found, false otherwise.
+ */
+export function searchYAML(needle: string, name: string, namespace: string, kind: string): boolean {
+  const result = execSync(`oc get -o yaml -n ${namespace} ${kind} ${name}`).toString();
+  return result.search(needle) >= 0;
+}

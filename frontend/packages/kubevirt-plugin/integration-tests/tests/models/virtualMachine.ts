@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '../../../../../integration-tests/protractor.conf';
 import * as vmView from '../../views/virtualMachine.view';
 import { nameInput, errorMessage } from '../../views/wizard.view';
@@ -28,14 +27,26 @@ import {
   WIZARD_TABLE_FIRST_ROW,
   DASHES,
 } from '../utils/consts';
-import { listViewAction } from '../../views/vm.actions.view';
-import Wizard from './wizard';
-import { KubevirtDetailView } from './kubevirtDetailView';
+import { detailViewAction } from '../../views/vm.actions.view';
 import { rowForName } from '../../views/kubevirtDetailView.view';
+import { Wizard } from './wizard';
+import { KubevirtDetailView } from './kubevirtDetailView';
+import { VirtualMachineInstance } from './virtualMachineInstance';
 
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config) {
     super({ ...config, kind: 'virtualmachines' });
+  }
+
+  async navigateToVmi(vmiTab: string): Promise<VirtualMachineInstance> {
+    await this.navigateToTab(TABS.OVERVIEW);
+    const vmPodName = await vmView
+      .vmDetailPod(this.namespace, this.name)
+      .$('a')
+      .getText();
+    const vmi = new VirtualMachineInstance({ name: vmPodName, namespace: testName });
+    await vmi.navigateToTab(vmiTab);
+    return vmi;
   }
 
   async action(action: string, waitForAction?: boolean, timeout?: number) {
@@ -46,7 +57,7 @@ export class VirtualMachine extends KubevirtDetailView {
       confirmDialog = false;
     }
 
-    await listViewAction(this.name)(action, confirmDialog);
+    await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
       switch (action) {
         case 'Start':
