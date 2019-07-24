@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '../../../../../integration-tests/protractor.conf';
-import * as vmView from '../../views/virtualMachine.view';
-import { nameInput, errorMessage } from '../../views/wizard.view';
+import { testName } from '@console/integration-tests/protractor.conf';
 import {
   resourceTitle,
   isLoaded,
-  filterForName,
   resourceRowsPresent,
-} from '../../../../../integration-tests/views/crud.view';
+  filterForName,
+} from '@console/integration-tests/views/crud.view';
+import * as vmView from '../../views/virtualMachine.view';
+import { nameInput, errorMessage } from '../../views/wizard.view';
 import {
   selectDropdownOption,
   waitForStringNotInElement,
@@ -29,8 +29,8 @@ import {
 } from '../utils/consts';
 import { detailViewAction } from '../../views/vm.actions.view';
 import { rowForName } from '../../views/kubevirtDetailView.view';
-import { Wizard } from './wizard';
 import { KubevirtDetailView } from './kubevirtDetailView';
+import { Wizard } from './wizard';
 import { VirtualMachineInstance } from './virtualMachineInstance';
 
 export class VirtualMachine extends KubevirtDetailView {

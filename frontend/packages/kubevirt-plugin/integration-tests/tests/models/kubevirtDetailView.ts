@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop */
 import { browser } from 'protractor';
+import { isLoaded, resourceRows } from '@console/integration-tests/views/crud.view';
+import { TABS, diskTabCol, networkTabCol } from '../utils/consts';
 import { storageResource, networkResource } from '../utils/types';
 import { fillInput, selectDropdownOption, click, tryNTimes } from '../utils/utils';
 import * as kubevirtDetailView from '../../views/kubevirtDetailView.view';
 import { confirmAction } from '../../views/vm.actions.view';
-import { isLoaded, resourceRows } from '../../../../../integration-tests/views/crud.view';
-import { TABS, diskTabCol, networkTabCol } from '../utils/consts';
 import { DetailView } from './detailView';
 
 export class KubevirtDetailView extends DetailView {

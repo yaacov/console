@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars, no-undef, no-await-in-loop, no-console, no-underscore-dangle */
 import { execSync } from 'child_process';
 import { $, by, ElementFinder, browser, ExpectedConditions as until, element } from 'protractor';
-import { config } from '../../../../../integration-tests/protractor.conf';
+import { config } from '@console/integration-tests/protractor.conf';
 import {
   nameInput as loginNameInput,
   passwordInput as loginPasswordInput,
   submitButton as loginSubmitButton,
-} from '../../../../../integration-tests/views/login.view';
+} from '@console/integration-tests/views/login.view';
 import { PAGE_LOAD_TIMEOUT } from './consts';
 
 export async function tryNTimes(attempts: number, func: Function) {

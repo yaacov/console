@@ -1,5 +1,5 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
-import { resourceRows } from '../../../../integration-tests/views/crud.view';
+import { resourceRows } from '@console/integration-tests/views/crud.view';
 
 export const createNic = $('#create-nic-btn');
 export const createDisk = $('#create-disk-btn');

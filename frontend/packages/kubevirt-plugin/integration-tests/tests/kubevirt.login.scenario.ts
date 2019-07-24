@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
-import { appHost } from '../../../../integration-tests/protractor.conf';
+import { appHost } from '@console/integration-tests/protractor.conf';
 import { logIn } from './utils/utils';
 
 describe('Authentication', () => {

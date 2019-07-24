@@ -12,7 +12,18 @@
     "@console/shared": "0.0.0-fixed",
     "kubevirt-web-ui-components": "~0.1.39"
   },
+  "devDependencies": {
+    "@console/integration-tests": "0.0.0-fixed"
+  },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTests": {
+      "kubevirt": [
+        "integration-tests/tests/kubevirt.login.scenario.ts",
+        "@console/integration-tests/tests/base.scenario.ts",
+        "integration-tests/tests/vm.wizard.scenario.ts",
+        "integration-tests/tests/vm.actions.scenario.ts"
+      ]
+    }
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { testName } from '../../../../../integration-tests/protractor.conf';
+import { testName } from '@console/integration-tests/protractor.conf';
 // eslint-disable-next-line no-unused-vars
 import { cloudInitConfig } from './types';
 import { STORAGE_CLASS } from './consts';
