@@ -8,13 +8,14 @@ import { TemplateKind } from '@console/internal/module/k8s';
 export const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
   const name = template && (template.name || getName(template));
   const namespace = template && (template.namespace || getNamespace(template));
+  const uid = template && (template.uid || getUID(template));
 
   return (
     <>
       <ResourceIcon kind={TemplateModel.kind} />
       <Link
         to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
-        title={getUID(template)}
+        title={uid}
         className="co-resource-item__resource-name"
       >
         {name}
@@ -24,5 +25,5 @@ export const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
 };
 
 type VMTemplateLinkProps = {
-  template: TemplateKind & { name?: string; namespace?: string };
+  template: TemplateKind & { name?: string; namespace?: string, uid?: string };
 };

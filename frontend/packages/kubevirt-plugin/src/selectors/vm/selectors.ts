@@ -6,10 +6,13 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
+  TEMPLATE_VM_TEMPLATE_NAME,
+  TEMPLATE_VM_TEMPLATE_NAMESPACE,
 } from '../../constants/vm';
 import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
-import { getAnnotations, getLabels } from '../selectors';
+import { getAnnotations, getLabels, getLabelValue } from '../selectors';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { getDiskBus } from './disk';
 import { getVolumeCloudInitUserData } from './volume';
@@ -42,6 +45,21 @@ export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
 export const getFlavor = (vmLike: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
+
+// Note(Yaacov): getVmTemplate returns any because in does not retuen a TemplateKind only name and namespace,
+export const getVmTemplate = (vmLike: VMLikeEntityKind): any => {
+  const vmTemplateName = getLabelValue(vmLike, TEMPLATE_VM_TEMPLATE_NAME);
+  const vmTemplateNamespace = getLabelValue(vmLike, TEMPLATE_VM_TEMPLATE_NAMESPACE);
+
+  if (vmTemplateName && vmTemplateNamespace) {
+    return ({
+      name: vmTemplateName,
+      namespace: vmTemplateNamespace,
+      uid: `${vmTemplateNamespace}/${vmTemplateName}`,
+    } as unknown) as TemplateKind;
+  }
+  return null;
+};
 
 export const isVMRunning = (value: VMKind) =>
   _.get(value, 'spec.running', false) as VMKind['spec']['running'];
@@ -96,3 +114,17 @@ export const getCloudInitUserData = (vm: VMKind) =>
 
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
+
+export const getBootableDevices = (vm: VMKind) => {
+  const disks = getDisks(vm)
+    .filter((disk) => disk.bootOrder)
+    .map((disk) => ({ type: 'disk', value: disk }));
+  const nics = getInterfaces(vm)
+    .filter((nic) => nic.bootOrder)
+    .map((nic) => ({ type: 'interface', value: nic }));
+
+  return [...disks, ...nics];
+};
+
+export const getBootableDevicesInOrder = (vm: VMKind) =>
+  getBootableDevices(vm).sort((a, b) => a.value.bootOrder - b.value.bootOrder);
