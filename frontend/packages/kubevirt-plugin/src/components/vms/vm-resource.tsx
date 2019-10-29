@@ -1,9 +1,15 @@
 import * as React from 'react';
-import { getVmTemplate, BootOrder, getBootableDevicesInOrder } from 'kubevirt-web-ui-components';
+import { BootOrder, getBootableDevicesInOrder } from 'kubevirt-web-ui-components';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
+import {
+  getVmTemplateNameAndNamespace,
+  getOperatingSystemName,
+  getOperatingSystem,
+  getWorkloadProfile,
+} from '../../selectors/vm';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
@@ -17,7 +23,6 @@ import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
-import { getOperatingSystemName, getOperatingSystem, getWorkloadProfile } from '../../selectors/vm';
 
 import './vm-resource.scss';
 
@@ -44,7 +49,7 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
 };
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpdateVM }) => {
-  const template = getVmTemplate(vm);
+  const template = getVmTemplateNameAndNamespace(vm);
 
   const id = getBasicID(vm);
   const description = getDescription(vm);
@@ -68,7 +73,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({ vm, canUpd
       </VMDetailsItem>
 
       <VMDetailsItem title="Template" idValue={prefixedID(id, 'template')} isNotAvail={!template}>
-        {template && <VMTemplateLink template={template} />}
+        {template && <VMTemplateLink name={template.name} namespace={template.namespace} />}
       </VMDetailsItem>
     </ResourceSummary>
   );

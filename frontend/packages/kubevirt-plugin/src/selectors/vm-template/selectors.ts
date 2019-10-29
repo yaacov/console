@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { getVmTemplate } from 'kubevirt-web-ui-components';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../models';
 import { VMKind, VMLikeEntityKind } from '../../types';
@@ -80,18 +79,10 @@ export const getTemplateForFlavor = (templates: TemplateKind[], vm: VMKind, flav
 };
 
 export const getFlavors = (vm: VMLikeEntityKind, templates: TemplateKind[]) => {
-  const vmTemplate = getVmTemplate(vm);
-
   const flavors = {
     // always listed
     [CUSTOM_FLAVOR]: CUSTOM_FLAVOR,
   };
-
-  if (vmTemplate) {
-    // enforced by the vm
-    const templateFlavors = getTemplateFlavors([vmTemplate]);
-    templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
-  }
 
   // if VM OS or Workload is set, add flavors of matching templates only. Otherwise list all flavors.
   const vmOS = getOperatingSystem(vm);

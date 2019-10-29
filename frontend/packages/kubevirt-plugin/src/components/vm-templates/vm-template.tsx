@@ -12,7 +12,7 @@ import { ListPage, Table, TableRow, TableData } from '@console/internal/componen
 import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { dimensifyHeader, dimensifyRow, getNamespace, DASH } from '@console/shared';
+import { dimensifyHeader, dimensifyRow, getName, getNamespace, DASH } from '@console/shared';
 import { match } from 'react-router';
 import { connect } from 'react-redux';
 import { openCreateVmWizard } from '../modals';
@@ -87,7 +87,7 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
   return (
     <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
-        <VMTemplateLink template={template} />
+        <VMTemplateLink name={getName(template)} namespace={getNamespace(template)}></VMTemplateLink>
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink

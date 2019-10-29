@@ -7,10 +7,12 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
+  TEMPLATE_VM_TEMPLATE_NAME,
+  TEMPLATE_VM_TEMPLATE_NAMESPACE,
 } from '../../constants/vm';
 import { V1Network, V1NetworkInterface, VMKind, VMLikeEntityKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
-import { getAnnotations, getLabels } from '../selectors';
+import { getAnnotations, getLabels, getLabelValue } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { getDataVolumeStorageSize, getDataVolumeStorageClassName } from '../dv/selectors';
 import { getDiskBus } from './disk';
@@ -48,6 +50,20 @@ export const getWorkloadProfile = (vm: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vm), TEMPLATE_WORKLOAD_LABEL);
 export const getFlavor = (vmLike: VMLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
+
+export const getVmTemplateNameAndNamespace = (
+  vm: VMLikeEntityKind,
+): { name: string; namespace: string } => {
+  const vmTemplateName = getLabelValue(vm, TEMPLATE_VM_TEMPLATE_NAME);
+  const vmTemplateNamespace = getLabelValue(vm, TEMPLATE_VM_TEMPLATE_NAMESPACE);
+  if (vmTemplateName && vmTemplateNamespace) {
+    return {
+      name: vmTemplateName,
+      namespace: vmTemplateNamespace,
+    };
+  }
+  return null;
+};
 
 export const isVMRunning = (value: VMKind) =>
   _.get(value, 'spec.running', false) as VMKind['spec']['running'];
