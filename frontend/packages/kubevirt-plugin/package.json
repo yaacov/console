@@ -10,7 +10,9 @@
     "@console/internal": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
-    "kubevirt-web-ui-components": "0.1.50"
+    "kubevirt-web-ui-components": "0.1.50",
+    "react-dnd":"9.4.0",
+    "react-dnd-html5-backend": "9.4.0"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",

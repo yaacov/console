@@ -3,12 +3,13 @@ import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/s
 import { PodKind } from '@console/internal/module/k8s';
 import { buildOwnerReference, compareOwnerReference } from '../../utils';
 import { VMIKind, VMKind } from '../../types/vm';
-import { VMMultiStatus } from '../../types';
+import { VMMultiStatus, VMLikeEntityKind } from '../../types';
 import {
   VM_STATUS_IMPORTING,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
 } from '../../statuses/vm/constants';
-import { isVMRunning } from './selectors';
+import { isVMRunning, getDisks, getInterfaces } from './selectors';
+import { asVM } from './vmlike';
 
 const IMPORTING_STATUSES = new Set([VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS]);
 
@@ -37,3 +38,31 @@ export const findConversionPod = (vm: VMKind, pods: PodKind[]) => {
     );
   });
 };
+
+export const getDevices = (vm: VMLikeEntityKind) => {
+  const disks = getDisks(asVM(vm)).map((disk) => ({
+    type: 'disk',
+    typeLabel: _.has(disk, 'cdrom') ? 'CD-ROM' : 'Disc',
+    value: disk,
+  }));
+  const nics = getInterfaces(asVM(vm)).map((nic) => ({
+    type: 'interface',
+    typeLabel: 'NIC',
+    value: nic,
+  }));
+
+  return [...disks, ...nics];
+};
+
+export const getBootableDevices = (vm: VMLikeEntityKind) => {
+  const devices = getDevices(vm).filter((device) => device.value.bootOrder);
+  return [...devices];
+};
+
+export const getUnBootableDevices = (vm: VMLikeEntityKind) => {
+  const devices = getDevices(vm).filter((device) => !device.value.bootOrder);
+  return [...devices];
+};
+
+export const getBootableDevicesInOrder = (vm: VMLikeEntityKind) =>
+  getBootableDevices(vm).sort((a, b) => a.value.bootOrder - b.value.bootOrder);

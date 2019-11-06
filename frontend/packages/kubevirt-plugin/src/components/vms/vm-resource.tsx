@@ -9,6 +9,7 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { VMBootOrderModal } from '../modals/vm-boot-order-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getCDRoms } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
@@ -114,6 +115,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
       <VMDetailsItem
         title="Boot Order"
+        canEdit
+        editButtonId={prefixedID(id, 'boot-order-edit')}
+        onEditClick={() => VMBootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'boot-order')}
         isNotAvail={sortedBootableDevices.length === 0}
       >
