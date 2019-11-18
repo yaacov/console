@@ -2,13 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { ModalComponentProps } from '@console/internal/components/factory';
-import { k8sPatch } from '@console/internal/module/k8s';
-import { Modal, Button } from '@patternfly/react-core';
-import { VMLikeEntityKind } from '../../../types';
-import { getBootableDevicesInOrder, getUnBootableDevices } from '../../../selectors/vm/combined';
-import { getVMLikeModel } from '../../../selectors/vm';
-import { PatchBuilder, PatchOperation } from '../../../k8s/utils/patch';
-import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 
 import { Empty } from './empty';
 import { DNDList } from './components/dnd-list';
@@ -43,29 +36,10 @@ const relaxSources = (sources: any[]) => {
   });
 };
 
-// Get bootable devices in order and relax the bootorder indexs to 1..<Length>.
-const getSources = (vmLikeEntity: VMLikeEntityKind): any[] => {
-  const sources = _.cloneDeep(getBootableDevicesInOrder(vmLikeEntity));
-  relaxSources(sources);
-
-  return sources;
-};
-
-// Get un bootable devices as options for adding new boot sources.
-const getOptions = (vmLikeEntity: VMLikeEntityKind): any[] =>
-  _.cloneDeep(getUnBootableDevices(vmLikeEntity));
-
 export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => {
-  const { vmLikeEntity, handlePromise, onClose } = props;
-  const [state, setState] = React.useState<BootOrderModalState>({
-    sources: getSources(vmLikeEntity),
-    options: getOptions(vmLikeEntity),
-  });
+  const { state, setState } = props;
   const [modeState, setModeState] = React.useState<BootOrderModalModeState>({
     isEditMode: false,
-  });
-  const [changedState, setChangedState] = React.useState<BootOrderModalChangedState>({
-    changed: false,
   });
 
   // Update component edit mode.
@@ -86,12 +60,12 @@ export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => 
     const sources = [...state.sources, item];
 
     relaxSources(sources);
+    setModeState({ isEditMode: false });
+
     setState({
       sources,
       options: _.orderBy(options, 'type', 'value.name'),
     });
-    setChangedState({ changed: true });
-    setModeState({ isEditMode: false });
   };
 
   const onDelete = (index: number) => {
@@ -102,12 +76,12 @@ export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => 
     const options = [...state.options, item];
 
     relaxSources(sources);
+    setModeState({ isEditMode: false });
+
     setState({
       sources,
       options: _.orderBy(options, ['type', 'value.name']),
     });
-    setChangedState({ changed: true });
-    setModeState({ isEditMode: false });
   };
   const onMove = (index: number, toIndex: number) => {
     const unMovedSources = [...state.sources.slice(0, index), ...state.sources.slice(index + 1)];
@@ -118,47 +92,9 @@ export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => 
     ];
 
     relaxSources(sources);
-    setState({ sources, options: state.options });
-    setChangedState({ changed: true });
     setModeState({ isEditMode: false });
-  };
-
-  const submit = async (e) => {
-    e.preventDefault();
-
-    const getDisks = () => [
-      ..._.filter(state.sources, (source) => source.type === 'disk').map((source) => source.value),
-      ..._.filter(state.options, (option) => option.type === 'disk').map((option) => option.value),
-    ];
-    const getInterfaces = () => [
-      ..._.filter(state.sources, (source) => source.type === 'interface').map(
-        (source) => source.value,
-      ),
-      ..._.filter(state.options, (option) => option.type === 'interface').map(
-        (option) => option.value,
-      ),
-    ];
-
-    if (changedState.changed) {
-      const patches = [
-        new PatchBuilder('/spec/template/spec/domain/devices/disks')
-          .setOperation(PatchOperation.REPLACE)
-          .setValue(getDisks())
-          .build(),
-        new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-          .setOperation(PatchOperation.REPLACE)
-          .setValue(getInterfaces())
-          .build(),
-      ];
-      const promise = k8sPatch(
-        getVMLikeModel(vmLikeEntity),
-        vmLikeEntity,
-        getVMLikePatches(vmLikeEntity, () => patches),
-      );
-      handlePromise(promise).then(onClose); // eslint-disable-line promise/catch-or-return
-    } else {
-      onClose();
-    }
+    
+    setState({ sources, options: state.options });
   };
 
   const itemRow: React.FC<{ index: number }> = ({ index }) => {
@@ -168,21 +104,7 @@ export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => 
   const addItemRow: React.FC<any> = AddItemRowFactory(state.options, addByKey);
 
   return (
-    <Modal
-      title="Virtual machine boot order"
-      isOpen
-      isSmall
-      onClose={onClose}
-      actions={[
-        <Button key="confirm" variant="primary" onClick={submit} isDisabled={!changedState.changed}>
-          Save
-        </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
-          Cancel
-        </Button>,
-      ]}
-      isFooterLeftAligned
-    >
+    <>
       {_.size(state.sources) === 0 && !modeState.isEditMode ? (
         <Empty
           onAdd={() => {
@@ -208,25 +130,22 @@ export const BootOrderModal = withHandlePromise((props: BootOrderModalProps) => 
           addItemSetEditMode={setEditMode}
         />
       )}
-    </Modal>
+    </>
   );
 });
-
-type BootOrderModalState = {
-  sources: any[];
-  options: any[];
-};
 
 type BootOrderModalModeState = {
   isEditMode: boolean;
 };
 
-type BootOrderModalChangedState = {
-  changed: boolean;
+export type BootOrderModalState = {
+  sources: any[];
+  options: any[];
 };
 
 export type BootOrderModalProps = HandlePromiseProps &
   ModalComponentProps & {
-    vmLikeEntity: VMLikeEntityKind;
+    state: BootOrderModalState,
+    setState: (BootOrderModalState) => void;
     onClose?: () => void;
   };
