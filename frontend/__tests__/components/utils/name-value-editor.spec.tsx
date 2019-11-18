@@ -1,12 +1,22 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { DragDropContext } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
 
-describe(NameValueEditor.displayName, () => {
-  const Editor = DragDropContext(HTML5Backend)(NameValueEditor);
+const withDragDropContext = <TProps extends {}>(
+  Component: React.ComponentClass<TProps> | React.StatelessComponent<TProps>,
+) => {
+  return (props: TProps) => (
+    <DndProvider backend={HTML5Backend}>
+      <Component {...props} />
+    </DndProvider>
+  );
+};
+
+describe(NameValueEditor['displayName'], () => {
+  const Editor = withDragDropContext(NameValueEditor);
 
   describe('When supplied with attributes nameString and valueString', () => {
     it('renders header correctly', () => {

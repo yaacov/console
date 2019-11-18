@@ -179,7 +179,7 @@ export const DroppableFileInput = withDragDropContext(
           errorMessage={this.state.errorMessage}
           onDrop={this.handleFileDrop}
           onChange={this.onDataChange}
-          inputFileData={this.state.inputFileData}
+          inputFileData={this.state.inputFileData as string}
           inputFileName={this.state.inputFileName}
         />
       );

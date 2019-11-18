@@ -18,7 +18,7 @@ const boxTarget = {
   },
 };
 
-const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, monitor) => ({
+const EditYAMLComponent: any = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, monitor) => ({
   connectDropTarget: connectObj.dropTarget(),
   isOver: monitor.isOver(),
   canDrop: monitor.canDrop(),
