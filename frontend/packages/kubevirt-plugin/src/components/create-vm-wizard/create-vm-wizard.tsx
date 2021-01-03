@@ -154,16 +154,16 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
   });
 
   const getWizardTitle = () => {
-    const { isCreateTemplate, isProviderImport, iUserTemplate } = props;
+    const { isCreateTemplate, isProviderImport, iUserTemplate, initialData } = props;
     if (isCreateTemplate) {
       return t('kubevirt-plugin~Create Virtual Machine template');
     }
     if (isProviderImport) {
       return t('kubevirt-plugin~Import Virtual Machine');
     }
-    return iUserTemplate
+    return iUserTemplate || initialData?.commonTemplateName
       ? t('kubevirt-plugin~Create Virtual Machine from {{template}}', {
-          template: iGetName(iUserTemplate),
+          template: iUserTemplate ? iGetName(iUserTemplate) : initialData?.commonTemplateName,
         })
       : t('kubevirt-plugin~Create Virtual Machine');
   };
