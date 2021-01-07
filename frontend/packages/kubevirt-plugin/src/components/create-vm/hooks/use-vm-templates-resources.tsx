@@ -51,7 +51,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
 
   const resourcesLoaded =
     utLoaded && btLoaded && podsLoaded && dvsLoaded && pvcsLoaded && baseLoaded;
-  const resourcesLoadError = utError || btError || podsError || dvsError || pvcsError || baseError;
+  const resourcesLoadError = utError || btError || podsError || dvsError || pvcsError;
 
   return React.useMemo(() => {
     const allPods = [...pods, ...basePods];
@@ -66,6 +66,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
       baseTemplates,
       resourcesLoaded,
       resourcesLoadError,
+      baseTemplatesLoadError: baseError,
     };
   }, [
     pods,
@@ -78,6 +79,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     baseTemplates,
     resourcesLoaded,
     resourcesLoadError,
+    baseError,
   ]);
 };
 
@@ -89,4 +91,5 @@ type useVmTemplatesResourcesValues = {
   baseTemplates: TemplateKind[];
   resourcesLoaded: boolean;
   resourcesLoadError: any;
+  baseTemplatesLoadError: any;
 };
