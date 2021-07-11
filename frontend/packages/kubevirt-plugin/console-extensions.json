@@ -16,6 +16,17 @@
       "model": {
         "group": "kubevirt.io",
         "version": "v1",
+        "kind": "VirtualMachineInstance"
+      },
+      "flag": "v1KUBEVIRT"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1",
         "kind": "VirtualMachine"
       },
       "flag": "KUBEVIRT"
