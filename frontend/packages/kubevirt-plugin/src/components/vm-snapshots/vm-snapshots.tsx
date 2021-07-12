@@ -8,8 +8,8 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { VirtualMachineSnapshotModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
@@ -99,7 +99,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
+    kind: referenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace,
   };

@@ -38,7 +38,12 @@ import {
   PersistentVolumeClaimModel,
   PodModel,
 } from '@console/internal/models';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';
@@ -196,7 +201,7 @@ const VMListEmpty: React.FC = () => {
 
   const searchText = 'virtual machine';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
-    kind: kubevirtReferenceForModel(QuickStartModel),
+    kind: referenceForModel(QuickStartModel),
     isList: true,
   });
   const hasQuickStarts =
@@ -307,13 +312,13 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       prop: 'pvcs',
     },
     {
-      kind: kubevirtReferenceForModel(DataVolumeModel),
+      kind: referenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
+      kind: referenceForModel(VirtualMachineImportModel),
       isList: true,
       namespace,
       prop: 'vmImports',

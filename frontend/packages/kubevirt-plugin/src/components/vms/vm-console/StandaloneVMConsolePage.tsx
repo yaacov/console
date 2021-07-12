@@ -3,7 +3,12 @@ import { RouteComponentProps } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { ConsoleType } from '../../../constants/vm/console-type';
 import { useEventListener } from '../../../hooks/use-event-listener';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
@@ -56,7 +61,7 @@ const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: 
   });
 
   const [vmImports] = useK8sWatchResource<VMImportKind[]>({
-    kind: kubevirtReferenceForModel(VirtualMachineImportModel),
+    kind: referenceForModel(VirtualMachineImportModel),
     namespace,
     isList: true,
   });
@@ -66,7 +71,7 @@ const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: 
     isList: true,
   });
   const [dataVolumes] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: kubevirtReferenceForModel(DataVolumeModel),
+    kind: referenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

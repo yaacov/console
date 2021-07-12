@@ -13,9 +13,9 @@ import {
   SectionHeading,
   Timestamp,
 } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineSnapshotModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName } from '../../selectors';
 import {
   getVmRestoreTime,
@@ -94,7 +94,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
   const { ns: namespace, name: snapshotName } = match.params;
 
   const resource: FirehoseResource = {
-    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
+    kind: referenceForModel(VirtualMachineSnapshotModel),
     prop: 'snapshot',
     isList: false,
     name: snapshotName,
@@ -143,7 +143,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
       match={match}
       name={snapshotName}
       namespace={namespace}
-      kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
+      kind={referenceForModel(VirtualMachineSnapshotModel)}
       kindObj={VirtualMachineSnapshotModel}
       resources={[resource]}
       menuActions={menuActions}

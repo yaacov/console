@@ -1,12 +1,14 @@
-import { k8sCreate, k8sGet, k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  k8sGet,
+  k8sKill,
+  K8sResourceKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
 import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
-import {
-  getKubevirtModelAvailableAPIVersion,
-  kubevirtReferenceForModel,
-} from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
 import { delay } from '../../../utils/utils';
 
@@ -44,8 +46,8 @@ const waitForUploadReady = async (dataVolume: K8sResourceKind, counter: number =
 
 const createUploadToken = async (pvcName: string, namespace: string): Promise<string> => {
   const tokenRequest = {
-    apiVersion: getKubevirtModelAvailableAPIVersion(UploadTokenRequestModel),
-    kind: kubevirtReferenceForModel(UploadTokenRequestModel),
+    apiVersion: UploadTokenRequestModel.apiVersion,
+    kind: referenceForModel(UploadTokenRequestModel),
     metadata: {
       name: pvcName,
       namespace,

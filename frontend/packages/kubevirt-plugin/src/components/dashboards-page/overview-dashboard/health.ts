@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { URLHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
@@ -49,13 +50,13 @@ export const additionalResources = {
     optional: true,
   },
   dataVolumes: {
-    kind: DataVolumeModel.kind,
+    kind: referenceForModel(DataVolumeModel),
     isList: true,
     optional: true,
   },
   vmImports: {
     isList: true,
-    kind: VirtualMachineImportModel.kind,
+    kind: referenceForModel(VirtualMachineImportModel),
     optional: true,
   },
 };

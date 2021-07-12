@@ -7,7 +7,6 @@ import {
   V2VVMWARE_DEPLOYMENT_NAME,
 } from '../../../../../../constants/v2v';
 import { OVirtProviderModel } from '../../../../../../models';
-import { kubevirtReferenceForModel } from '../../../../../../models/kubevirtReferenceForModel';
 import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 import { iGetIn } from '../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
@@ -92,7 +91,7 @@ const getQueries = ({
 
   if (activeOvirtProviderCRName) {
     resources.push({
-      kind: kubevirtReferenceForModel(OVirtProviderModel),
+      kind: referenceForModel(OVirtProviderModel),
       model: OVirtProviderModel,
       name: activeOvirtProviderCRName,
       namespace,

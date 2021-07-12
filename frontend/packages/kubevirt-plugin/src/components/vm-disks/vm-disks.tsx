@@ -10,13 +10,13 @@ import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/mod
 import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
+  referenceForModel,
   TemplateKind,
 } from '@console/internal/module/k8s';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
@@ -176,7 +176,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
       optional: true,
     }),
     {
-      kind: kubevirtReferenceForModel(DataVolumeModel),
+      kind: referenceForModel(DataVolumeModel),
       namespace,
       prop: 'datavolumes',
       optional: true,

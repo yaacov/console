@@ -69,7 +69,7 @@ export const isPodActivity = (resource) => getName(resource).startsWith('kubevir
 
 export const k8sDVResource = {
   isList: true,
-  kind: DataVolumeModel.kind,
+  kind: referenceForModel(DataVolumeModel),
   prop: 'dvs',
 };
 

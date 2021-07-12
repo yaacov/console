@@ -13,6 +13,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
@@ -23,10 +24,7 @@ import {
   VirtualMachineModel,
   VirtualMachineSnapshotModel,
 } from '../../../models';
-import {
-  getKubevirtModelAvailableAPIVersion,
-  kubevirtReferenceForModel,
-} from '../../../models/kubevirtReferenceForModel';
+import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getVolumes } from '../../../selectors/vm';
@@ -39,7 +37,7 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
+    kind: referenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace: getNamespace(vm),
   };
