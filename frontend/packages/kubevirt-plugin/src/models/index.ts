@@ -66,6 +66,72 @@ export const VirtualMachineInstanceMigrationModel: K8sKind = {
   crd: true,
 };
 
+export const v1alpha3VirtualMachineModel: K8sKind = {
+  label: 'Virtual Machine',
+  labelPlural: 'Virtual Machines',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachines',
+  abbr: 'VM',
+  namespaced: true,
+  kind: 'VirtualMachine',
+  id: 'virtualmachine',
+  crd: true,
+};
+
+export const v1alpha3VirtualMachineInstanceModel: K8sKind = {
+  label: 'Virtual Machine Instance',
+  labelPlural: 'Virtual Machine Instances',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstances',
+  abbr: 'VMI',
+  namespaced: true,
+  kind: 'VirtualMachineInstance',
+  id: 'virtualmachineinstance',
+  color: '#002F5D',
+  crd: true,
+};
+
+export const v1alpha3VirtualMachineInstancePresetModel: K8sKind = {
+  label: 'Virtual Machine Instance Preset',
+  labelPlural: 'Virtual Machine Instance Presets',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstancepresets',
+  abbr: 'VMIP',
+  namespaced: true,
+  kind: 'VirtualMachineInstancePreset',
+  id: 'virtualmachineinstancepreset',
+  crd: true,
+};
+
+export const v1alpha3VirtualMachineInstanceReplicaSetModel: K8sKind = {
+  label: 'Virtual Machine Instance Replica Set',
+  labelPlural: 'Virtual Machine Instance Replica Sets',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstancereplicasets',
+  abbr: 'VMIR',
+  namespaced: true,
+  kind: 'VirtualMachineInstanceReplicaSet',
+  id: 'virtualmachineinstancereplicaset',
+  crd: true,
+};
+
+export const v1alpha3VirtualMachineInstanceMigrationModel: K8sKind = {
+  label: 'Virtual Machine Instance Migration',
+  labelPlural: 'Virtual Machine Instance Migrations',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstancemigrations',
+  abbr: 'VMIM',
+  namespaced: true,
+  kind: 'VirtualMachineInstanceMigration',
+  id: 'virtualmachineinstancemigration',
+  crd: true,
+};
+
 export const DataVolumeModel: K8sKind = {
   label: 'Data Volume',
   labelPlural: 'Data Volumes',
