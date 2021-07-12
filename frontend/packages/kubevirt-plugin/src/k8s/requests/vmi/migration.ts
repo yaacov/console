@@ -11,6 +11,7 @@ export const getMigrationName = (vmi: VMIKind) => prefixedID(getName(vmi), 'migr
 export const startVMIMigration = (vmi: VMIKind) => {
   const migration = new VMIMigration()
     .setName(getMigrationName(vmi))
+    .setApiVersion(vmi.apiVersion)
     .setVMI(vmi)
     .build();
 
