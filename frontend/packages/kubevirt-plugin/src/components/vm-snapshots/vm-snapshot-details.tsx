@@ -16,6 +16,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineModel, VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName } from '../../selectors';
 import {
   getVmRestoreTime,
