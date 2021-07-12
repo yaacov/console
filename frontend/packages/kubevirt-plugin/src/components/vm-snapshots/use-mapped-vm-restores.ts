@@ -3,8 +3,8 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { VirtualMachineRestoreModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVmRestoreSnapshotName, getVmRestoreTime } from '../../selectors/snapshot/snapshot';
 import { VMRestore } from '../../types';
 
@@ -13,7 +13,7 @@ export const useMappedVMRestores = (
 ): [{ [key: string]: VMRestore }, boolean, any] => {
   const restoreResource: WatchK8sResource = {
     isList: true,
-    kind: kubevirtReferenceForModel(VirtualMachineRestoreModel),
+    kind: referenceForModel(VirtualMachineRestoreModel),
     namespaced: true,
     namespace,
   };

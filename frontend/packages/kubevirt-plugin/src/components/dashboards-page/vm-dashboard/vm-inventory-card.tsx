@@ -7,6 +7,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -48,7 +49,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const snapshotResource: WatchK8sResource = React.useMemo(
     () => ({
       isList: true,
-      kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
+      kind: referenceForModel(VirtualMachineSnapshotModel),
       namespaced: true,
       namespace,
     }),

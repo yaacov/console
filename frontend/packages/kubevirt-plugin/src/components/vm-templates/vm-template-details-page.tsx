@@ -6,6 +6,7 @@ import { DetailsPage } from '@console/internal/components/factory/details';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   K8sResourceKindReference,
   PersistentVolumeClaimKind,
@@ -16,7 +17,6 @@ import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
 import { DataVolumeModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../types/api';
@@ -45,7 +45,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const { name } = props.match.params;
   const namespace = props.match.params.ns;
   const [dataVolumes, dvLoaded, dvError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: kubevirtReferenceForModel(DataVolumeModel),
+    kind: referenceForModel(DataVolumeModel),
     isList: true,
     namespace,
   });

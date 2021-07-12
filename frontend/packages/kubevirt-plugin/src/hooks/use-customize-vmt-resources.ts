@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import {
+  PersistentVolumeClaimKind,
+  PodKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { CDI_APP_LABEL, TEMPLATE_VM_NAME_LABEL } from '../constants';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
@@ -61,7 +65,7 @@ export const useCustomizeVMTResources = (
   });
 
   const [dataVolumes] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: kubevirtReferenceForModel(DataVolumeModel),
+    kind: referenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

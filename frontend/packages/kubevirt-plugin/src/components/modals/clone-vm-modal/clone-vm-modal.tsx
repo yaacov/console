@@ -24,7 +24,11 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
-import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
@@ -277,7 +281,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
 
   if (requestsDataVolumes) {
     resources.push({
-      kind: kubevirtReferenceForModel(DataVolumeModel),
+      kind: referenceForModel(DataVolumeModel),
       namespace: vmNamespace,
       isList: true,
       prop: 'dataVolumes',

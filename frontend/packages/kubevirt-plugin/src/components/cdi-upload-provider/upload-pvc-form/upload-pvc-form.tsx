@@ -45,6 +45,7 @@ import {
   K8sResourceKind,
   K8sVerb,
   PersistentVolumeClaimKind,
+  referenceForModel,
   StorageClassResourceKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
@@ -63,7 +64,6 @@ import {
   PVCInitError,
 } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { DataVolumeModel } from '../../../models';
-import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
@@ -202,8 +202,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
       const obj: K8sResourceKind = {
-        apiVersion: getKubevirtModelAvailableAPIVersion(DataVolumeModel),
-        kind: DataVolumeModel.kind,
+        apiVersion: DataVolumeModel.apiVersion,
+        kind: referenceForModel(DataVolumeModel),
         metadata: {
           name: pvcName,
           namespace,

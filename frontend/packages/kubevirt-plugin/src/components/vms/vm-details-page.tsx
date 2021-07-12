@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import {
   VM_DETAIL_CONSOLES_HREF,
@@ -57,7 +58,7 @@ export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
   const { t } = useTranslation();
-  const [snapshotResource] = useK8sModel(kubevirtReferenceForModel(VirtualMachineSnapshotModel));
+  const [snapshotResource] = useK8sModel(referenceForModel(VirtualMachineSnapshotModel));
   const vmStatusBundle = useVMStatus(name, namespace);
 
   const dashboardPage = {
@@ -137,7 +138,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       fieldSelector: `metadata.name=${name}`, // Note(yaacov): we look for a list, instead of one obj, to avoid 404 response if no VMI exist.
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
+      kind: referenceForModel(VirtualMachineImportModel),
       isList: true,
       namespace,
       prop: 'vmImports',
@@ -150,7 +151,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       prop: 'pvcs',
     },
     {
-      kind: kubevirtReferenceForModel(DataVolumeModel),
+      kind: referenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
