@@ -4,7 +4,7 @@ import { VMIKind } from '../../types/vm';
 import { isConnectionEncrypted } from '../../utils/url';
 import { getName } from '../selectors';
 import { getServicePort } from '../service/selectors';
-import { getVMIApiPath, getVMISubresourcePath } from './selectors';
+import { getVMISubresourcePath } from './selectors';
 
 const findVMServiceWithPort = (
   vmi: VMIKind,
@@ -51,7 +51,7 @@ export const getSerialConsoleConnectionDetails = (
   return {
     host: `${protocol}://${window.location.hostname}:${window.location.port ||
       (isConnectionEncrypted() ? '443' : '80')}`,
-    path: `/${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/console`, // CSRF Token will be added in WSFactory
+    path: `/${getVMISubresourcePath(vmi)}/console`, // CSRF Token will be added in WSFactory
   };
 };
 
