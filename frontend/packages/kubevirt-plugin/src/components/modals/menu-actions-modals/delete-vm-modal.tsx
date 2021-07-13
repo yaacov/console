@@ -14,17 +14,18 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVM } from '../../../k8s/requests/vm';
 import {
+  v1alpha3VirtualMachineModel,
   VirtualMachineImportModel,
   VirtualMachineModel,
   VirtualMachineSnapshotModel,
 } from '../../../models';
-import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getVolumes } from '../../../selectors/vm';
@@ -49,13 +50,16 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const [snapshots] = useK8sWatchResource<VMSnapshot[]>(snapshotResource);
   const vmHasSnapshots = snapshots.some((snap) => getVmSnapshotVmName(snap) === getName(vm));
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = !isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   const namespace = getNamespace(vmUpToDate);
   const name = getName(vmUpToDate);
 
   const vmReference = {
     name,
-    kind: VirtualMachineModel.kind,
-    apiVersion: getKubevirtModelAvailableAPIVersion(VirtualMachineModel),
+    kind: referenceForModel(virtualMachineModel),
+    apiVersion: virtualMachineModel.apiVersion,
   } as any;
 
   const [vmImport, vmImportLoaded] = useVirtualMachineImport(vmUpToDate);
@@ -87,7 +91,7 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />
-        {t('kubevirt-plugin~Delete {{modelLabel}}?', { modelLabel: VirtualMachineModel.label })}
+        {t('kubevirt-plugin~Delete {{modelLabel}}?', { modelLabel: virtualMachineModel.label })}
       </ModalTitle>
       <ModalBody>
         <p>

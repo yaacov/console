@@ -2,22 +2,35 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, HintBlock } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
+import {
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../models/index';
 import { getOwnerReferences } from '../../selectors';
 import { VMIKind } from '../../types';
 
 const VMIDetailsPageInfoMessage: React.FC<InfoMessageHintBlockProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
+
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const [vmi, isLoaded] = useK8sWatchResource<VMIKind>({
-    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    kind: referenceForModel(virtualMachineInstanceModel),
     name,
     namespace,
   });
 
   const isOwnedByVM =
     vmi &&
-    !!getOwnerReferences<VMIKind>(vmi)?.find(({ kind }) => kind === VirtualMachineModel.kind);
+    !!getOwnerReferences<VMIKind>(vmi)?.find(({ kind }) => kind === virtualMachineModel.kind);
 
   const showMessage = isLoaded && !isOwnedByVM && vmi !== null;
 

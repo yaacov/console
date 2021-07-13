@@ -8,15 +8,13 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVMI } from '../../../k8s/requests/vmi/actions';
-import { VirtualMachineInstanceModel } from '../../../models';
-import {
-  getKubevirtModelAvailableAPIVersion,
-  kubevirtReferenceForModel,
-} from '../../../models/kubevirtReferenceForModel';
+import { v1alpha3VirtualMachineInstanceModel, VirtualMachineInstanceModel } from '../../../models';
 import { getName, getNamespace } from '../../../selectors';
 import { getVMIVolumes } from '../../../selectors/vmi';
 import { VMIKind } from '../../../types';
@@ -28,6 +26,11 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
 
   const { t } = useTranslation();
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const vmiUpToDate = useUpToDateVMLikeEntity<VMIKind>(vmi);
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
 
@@ -36,8 +39,8 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
 
   const vmiReference = {
     name,
-    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
-    apiVersion: getKubevirtModelAvailableAPIVersion(VirtualMachineInstanceModel),
+    kind: referenceForModel(virtualMachineInstanceModel),
+    apiVersion: virtualMachineInstanceModel.apiVersion,
   } as any;
 
   const [ownedVolumeResources, isOwnedVolumeResourcesLoaded] = useOwnedVolumeReferencedResources(

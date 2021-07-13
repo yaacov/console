@@ -13,22 +13,26 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import { Prompt } from 'react-router';
 import { ResourceLink } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
-import { VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../../models';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
 import finishCustomizationModal from '../../modals/template-customization/FinishCustomizationModal';
 import VMConsoles from '../../vms/vm-console/VMConsoles';
-
 import './customize-source.scss';
 
 type VMPopoverProps = Pick<CustomizeSourceConsoleProps, 'vm'> & Pick<PopoverProps, 'children'>;
 
 const VMPopover: React.FC<VMPopoverProps> = ({ vm, children }) => {
   const { t } = useTranslation();
+
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   return (
     <Popover
       headerContent={<div>{t('kubevirt-plugin~Source running on virtual machine')}</div>}
@@ -41,7 +45,7 @@ const VMPopover: React.FC<VMPopoverProps> = ({ vm, children }) => {
           </StackItem>
           <StackItem>
             <ResourceLink
-              kind={kubevirtReferenceForModel(VirtualMachineModel)}
+              kind={referenceForModel(virtualMachineModel)}
               name={vm.metadata.name}
               namespace={vm.metadata.namespace}
             />

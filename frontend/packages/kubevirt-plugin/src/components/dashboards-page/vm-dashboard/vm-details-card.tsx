@@ -8,6 +8,8 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -18,8 +20,12 @@ import DetailsBody from '@console/shared/src/components/dashboard/details-card/D
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import {
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../../models';
 import {
   getCreationTimestamp,
   getName,
@@ -45,6 +51,12 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmiLike = vm || vmi;
   const { status } = vmStatusBundle;
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
@@ -63,9 +75,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
-    vm
-      ? kubevirtReferenceForModel(VirtualMachineModel)
-      : kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    vm ? referenceForModel(virtualMachineModel) : referenceForModel(virtualMachineInstanceModel),
     name,
     namespace,
   )}/${VM_DETAIL_DETAILS_HREF}`;

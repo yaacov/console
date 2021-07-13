@@ -6,6 +6,7 @@ import { Flatten, ListPage, MultiListPage } from '@console/internal/components/f
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { CDI_APP_LABEL } from '../../constants';
 import {
   TEMPLATE_CUSTOMIZED_ANNOTATION,
@@ -14,15 +15,19 @@ import {
   TEMPLATE_TYPE_VM,
   VM_CUSTOMIZE_LABEL,
 } from '../../constants/vm';
-import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import {
+  DataVolumeModel,
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../models';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
 import { VMKind } from '../../types';
 import { getLoadedData } from '../../utils';
 import { VirtualMachineTemplateBundle } from './table/types';
 import VMTemplateTable from './table/VMTemplateTable';
 import { filterTemplates } from './utils';
-
 import './vm-template.scss';
 
 // TODO
@@ -90,6 +95,12 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const resources = [
     {
       kind: TemplateModel.kind,
@@ -131,7 +142,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'pods',
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineModel),
+      kind: referenceForModel(virtualMachineModel),
       selector: {
         matchLabels: { [VM_CUSTOMIZE_LABEL]: 'true' },
       },
@@ -140,7 +151,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'vms',
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+      kind: referenceForModel(virtualMachineInstanceModel),
       namespace,
       isList: true,
       prop: 'vmis',

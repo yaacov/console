@@ -7,7 +7,8 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { EventModel } from '@console/internal/models';
-import { EventKind } from '@console/internal/module/k8s';
+import { EventKind, referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import ActivityBody, {
   PauseButton,
   RecentEventsBodyContent,
@@ -17,13 +18,16 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import {
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../../models';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMILikeEntityKind } from '../../../types/vmLike';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-
 import './vm-activity.scss';
 
 const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
@@ -64,15 +68,19 @@ export const VMActivityCard: React.FC = () => {
   const { vm, vmi } = React.useContext(VMDashboardContext);
   const vmiLike = vm || vmi;
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const [paused, setPaused] = React.useState(false);
   const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
 
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const viewEventsLink = `${resourcePath(
-    vm
-      ? kubevirtReferenceForModel(VirtualMachineModel)
-      : kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    vm ? referenceForModel(virtualMachineModel) : referenceForModel(virtualMachineInstanceModel),
     name,
     namespace,
   )}/events`;

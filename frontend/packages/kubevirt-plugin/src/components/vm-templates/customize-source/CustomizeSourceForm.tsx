@@ -28,8 +28,13 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
+import {
+  PersistentVolumeClaimKind,
+  referenceForModel,
+  TemplateKind,
+} from '@console/internal/module/k8s';
 import { VMKind } from '@console/kubevirt-plugin/src/types';
+import { useFlag } from '@console/shared/src';
 import {
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
@@ -44,8 +49,7 @@ import { useBaseImages } from '../../../hooks/use-base-images';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
-import { VirtualMachineModel } from '../../../models/index';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../../models/index';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getCPU, vCPUCount } from '../../../selectors/vm';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -59,7 +63,6 @@ import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
 import { filterTemplates } from '../utils';
 import { FORM_ACTION_TYPE, formReducer, initFormState } from './customize-source-form-reducer';
-
 import './customize-source.scss';
 
 const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
@@ -90,12 +93,15 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     },
   });
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   const [
     vmWithCustomBootSource,
     loadvmWithCutomBootSource,
     vmWithCustomBootSourceError,
   ] = useK8sWatchResource<VMKind[]>({
-    kind: kubevirtReferenceForModel(VirtualMachineModel),
+    kind: referenceForModel(virtualMachineModel),
     isList: true,
     namespace,
     selector: {

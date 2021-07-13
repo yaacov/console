@@ -20,11 +20,11 @@ import {
   useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
 import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
 import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
-import { DataVolumeModel, VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { DataVolumeModel, v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../../models';
 import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
 import {
   getDefaultDiskBus,
@@ -53,7 +53,6 @@ import {
 } from '../../vm-templates/vm-template-source';
 import { BootSourceState } from './boot-source-form-reducer';
 import { FORM_ACTION_TYPE, FormAction, FormState } from './create-vm-form-reducer';
-
 import './create-vm-form.scss';
 
 export type CreateVMFormProps = {
@@ -78,9 +77,12 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   showProjectDropdown = true,
 }) => {
   const { t } = useTranslation();
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   const { name, nameValidation, namespace, startVM, template } = state;
   const [vms, loaded] = useK8sWatchResource<VMKind[]>({
-    kind: kubevirtReferenceForModel(VirtualMachineModel),
+    kind: referenceForModel(virtualMachineModel),
     namespace,
     isList: true,
   });

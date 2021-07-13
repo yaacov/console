@@ -15,6 +15,7 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
 import { ConfigMapModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
@@ -22,12 +23,10 @@ import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
 } from '../../constants/v2v';
-import { VirtualMachineModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachinesPage } from './vm';
-
 import './virtualization.scss';
 
 export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
@@ -101,6 +100,9 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   const [importAllowed, setImportAllowed] = useSafetyFirst(false);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   React.useEffect(() => {
     VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES.forEach((configMapNamespace) => {
       checkAccess({
@@ -125,7 +127,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 
   const namespace = props.match.params.ns;
 
-  const obj = { loaded: true, data: { kind: kubevirtReferenceForModel(VirtualMachineModel) } };
+  const obj = { loaded: true, data: { kind: referenceForModel(virtualMachineModel) } };
   const pages = [
     {
       href: '',

@@ -6,9 +6,15 @@ import {
   PodKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { CDI_APP_LABEL, TEMPLATE_VM_NAME_LABEL } from '../constants';
-import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
-import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
+import {
+  DataVolumeModel,
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../models';
 import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
 
@@ -26,15 +32,21 @@ export const useCustomizeVMTResources = (
   name: string,
   namespace: string,
 ): CustomizeVMTResourcesResult => {
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const [vm, vmLoaded, vmLoadError] = useK8sWatchResource<VMKind>({
-    kind: kubevirtReferenceForModel(VirtualMachineModel),
+    kind: referenceForModel(virtualMachineModel),
     name,
     namespace,
     isList: false,
   });
 
   const [vmis, vmisLoaded, vmiLoadError] = useK8sWatchResource<VMIKind>({
-    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    kind: referenceForModel(virtualMachineInstanceModel),
     namespace,
     isList: true,
     fieldSelector: `metadata.name=${name}`,

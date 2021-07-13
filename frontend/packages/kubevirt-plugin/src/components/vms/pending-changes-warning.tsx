@@ -10,10 +10,16 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import {
+  v1alpha3VirtualMachineInstanceModel,
+  v1alpha3VirtualMachineModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../models';
 import { asVM } from '../../selectors/vm';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { PENDING_CHANGES_WARNING_MESSAGE } from '../../strings/vm/status';
@@ -23,7 +29,6 @@ import { getLoadedData } from '../../utils';
 import { getPendingChanges, hasPendingChanges } from '../../utils/pending-changes';
 import { PendingChangesAlert } from '../Alerts/PendingChangesAlert';
 import { PendingChanges, PendingChangesByTab } from './types';
-
 import './pending-changes-warning.scss';
 
 type PendingChangesWarningProps = {
@@ -142,15 +147,21 @@ export const PendingChangesWarningFirehose: React.FC<PendingChangeWarningFirehos
   name,
   namespace,
 }) => {
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+  const virtualMachineInstanceModel = isv1Available
+    ? VirtualMachineInstanceModel
+    : v1alpha3VirtualMachineInstanceModel;
+
   const resources = [
     {
-      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+      kind: referenceForModel(virtualMachineInstanceModel),
       name,
       namespace,
       prop: 'vmi',
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineModel),
+      kind: referenceForModel(virtualMachineModel),
       name,
       namespace,
       prop: 'vmLikeEntity',

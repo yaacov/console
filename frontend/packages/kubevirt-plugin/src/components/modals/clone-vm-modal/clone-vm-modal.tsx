@@ -29,17 +29,17 @@ import {
   PersistentVolumeClaimKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
-import { DataVolumeModel, VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { getName, getNamespace, ValidationErrorType, getDescription } from '../../../selectors';
+import { DataVolumeModel, v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../../models';
+import { getDescription, getName, getNamespace, ValidationErrorType } from '../../../selectors';
 import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
   getVolumes,
   isVMExpectedRunning,
 } from '../../../selectors/vm';
-import { VMKind, VMIKind } from '../../../types';
+import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
@@ -47,7 +47,6 @@ import { validateVmLikeEntityName } from '../../../utils/validations/vm';
 import { Errors } from '../../errors/errors';
 import { ModalFooter } from '../modal/modal-footer';
 import { ConfigurationSummary } from './configuration-summary';
-
 import './_clone-vm-modal.scss';
 
 export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
@@ -253,6 +252,9 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
   const vmNamespace = getNamespace(vm);
   const [namespace, setNamespace] = React.useState(vmNamespace);
 
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   const requestsDataVolumes = !!getVolumes(vm).find(getVolumeDataVolumeName);
   const requestsPVCs = !!getVolumes(vm).find(getVolumePersistentVolumeClaimName);
 
@@ -263,7 +265,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
       prop: 'namespaces',
     },
     {
-      kind: kubevirtReferenceForModel(VirtualMachineModel),
+      kind: referenceForModel(virtualMachineModel),
       namespace,
       isList: true,
       prop: 'virtualMachines',

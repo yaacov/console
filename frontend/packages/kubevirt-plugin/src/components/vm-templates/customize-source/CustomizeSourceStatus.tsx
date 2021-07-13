@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Alert, Bullseye, Button, Spinner, Stack, StackItem, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
-import { VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src';
+import { v1alpha3VirtualMachineModel, VirtualMachineModel } from '../../../models';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
 import { VMStatus } from '../../vm-status/vm-status';
-
 import './customize-source.scss';
 
 const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
@@ -17,6 +17,10 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
   vmStatusBundle,
 }) => {
   const { t } = useTranslation();
+
+  const isv1Available = useFlag('v1KUBEVIRT');
+  const virtualMachineModel = isv1Available ? VirtualMachineModel : v1alpha3VirtualMachineModel;
+
   return (
     <Bullseye data-test="template-source">
       <Stack hasGutter className="kv-customize-source__status">
@@ -45,7 +49,7 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
             </StackItem>
             <StackItem>
               <ResourceLink
-                kind={kubevirtReferenceForModel(VirtualMachineModel)}
+                kind={referenceForModel(virtualMachineModel)}
                 name={vm.metadata.name}
                 namespace={vm.metadata.namespace}
                 className="kv-customize-source__status-link"
